@@ -36,9 +36,8 @@ let movie = ExpressionNode<Movie>.Init "m"
 let wrote = ExpressionRel<ACTED_IN>.Init "w" 
 let directed = ExpressionRel<DIRECTED>.Init "d" 
 
-//let exWisD = fun (writer: Cypher.ICypherResultItem) (m: Cypher.ICypherResultItem) -> (writer.As<schema.Person.Proxy>(), m.As<schema.Movie.Proxy>()) 
 db.Cypher
-    .Match(  writer -| wrote |-> movie <-| directed |- writer  )   
+    .Match(  writer -| wrote |-> initNode<Movie> "movie" <-| directed |- writer  )   
     .Return( writer )
     .Limit(Nullable<int>(20))
     .Results

@@ -16,6 +16,12 @@ type ExpressionRel< 'a >
     = { v:string }
     with static member inline Init<'a> varName : ExpressionRel<'a> = {v=varName }
 
+let inline initNode<'a> (nm:string) : ExpressionNode<'a> =
+    {v = nm}
+
+let inline initRel<'a> (nm:string) : ExpressionRel<'a> =
+    {v = nm}
+
 type ExpressionNodeRel = { lhs: string; }
 
 let ExprNodeName<'a> (x: ExpressionNode< 'a > ) =
