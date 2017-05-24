@@ -23,21 +23,18 @@ let db =
 [<CLIMutable>]
 type Person = { name: string; born: int;}
 [<CLIMutable>]
-type Movie = { name: string; released: int; }
-[<CLIMutable>]
-type ACTED_IN = {a:string}
-[<CLIMutable>]
-type DIRECTED = {b:string}
+type Movie = { title: string; released: int; tagline: string; }
 
 
-let writer = ExpressionNode<Person>.Init "writer" 
-let director = ExpressionNode<Person>.Init "director" 
-let movie = ExpressionNode<Movie>.Init "m" 
-let wrote = ExpressionRel<ACTED_IN>.Init "w" 
-let directed = ExpressionRel<DIRECTED>.Init "d" 
+type ACTED_IN() = class end
+
+type DIRECTED() = class end
+
+let writer = ExpressionNode<Person>.Init "actorAndDirector" 
+let movie = ExpressionNode<Movie>.Init "theMOvie" 
 
 db.Cypher
-    .Match(  writer -| wrote |-> initNode<Movie> "movie" <-| directed |- writer  )   
+    .Match(  writer -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- writer  )   
     .Return( writer )
     .Limit(Nullable<int>(20))
     .Results

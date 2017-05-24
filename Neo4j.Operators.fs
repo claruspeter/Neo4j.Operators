@@ -8,6 +8,8 @@ open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Linq.RuntimeHelpers
 open Neo4jClient
 
+let private rnd = Random()
+
 type ExpressionNode< 'a> 
     = { v:string }
     with static member inline Init<'a> varName : ExpressionNode<'a> = {v=varName }
@@ -16,11 +18,13 @@ type ExpressionRel< 'a >
     = { v:string }
     with static member inline Init<'a> varName : ExpressionRel<'a> = {v=varName }
 
-let inline initNode<'a> (nm:string) : ExpressionNode<'a> =
-    {v = nm}
+let N<'a> : ExpressionNode<'a> =
+    let t = typeof<'a>.Name.ToLower()
+    {v = "" }// sprintf "%s_%d" t (rnd.Next(9999)) }
 
-let inline initRel<'a> (nm:string) : ExpressionRel<'a> =
-    {v = nm}
+let R<'a> : ExpressionRel<'a> =
+    let t = typeof<'a>.Name.ToLower()
+    {v = "" } //sprintf "%s_%d" t (rnd.Next(9999)) }
 
 type ExpressionNodeRel = { lhs: string; }
 
@@ -74,5 +78,6 @@ type Cypher.ICypherFluentQuery with
         // //let aExpr = LeafExpressionConverter.QuotationToLambdaExpression mthd
         // let aCompiled = unbox<Expression<Func<'a>>> mthd
         this.Return<'a>(x.v)
-
+    member this.Return<'a> (x: ExpressionRel<'a>  ) =
+        this.Return<'a>(x.v)
 
