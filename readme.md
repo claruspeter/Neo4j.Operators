@@ -1,5 +1,39 @@
 # Neo4j.Operators
 
+## Purpose 
+A collection of operators that can help write a Neo4j Cipher query
+using the natural syntax (or as close as possible)
+without resorting to too many magic strings.
+
+## Example
+
+[from Script.fsx](Script.fsx)
+
+```` fsharp
+
+    db.Cypher
+        .Match( "(stagehog:Person)-[:ACTED_IN]->(:Movie)<-[:DIRECTED]-(stagehog)" )  
+        .Return( "stagehog" )
+        .Results
+
+````
+-- The original query using a "SQL"-like string for the Cipher match clause, 
+and another string for the return variable that can't be compile-time checked.
+
+```` fsharp
+
+    let stagehog = ExpressionNode<Person>.Init "actorAndDirector" 
+
+    db.Cypher
+        .Match(  stagehog -| R<ACTED_IN>  |-> N<Movie> <-| R<DIRECTED> |- stagehog  )   
+        .Return( stagehog )
+        .Results
+
+````
+-- Current state of the operators that allow a _similar looking_ query,
+that is compile-time checkable, including the return variable.
+
+
 
 # Licence
 

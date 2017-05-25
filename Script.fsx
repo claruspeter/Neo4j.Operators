@@ -30,12 +30,12 @@ type ACTED_IN() = class end
 
 type DIRECTED() = class end
 
-let writer = ExpressionNode<Person>.Init "actorAndDirector" 
+let stagehog = ExpressionNode<Person>.Init "actorAndDirector" 
 let movie = ExpressionNode<Movie>.Init "theMOvie" 
 
 db.Cypher
-    .Match(  writer -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- writer  )   
-    .Return( writer )
+    .Match(  stagehog -| R<ACTED_IN>  |-> N<Movie> <-| R<DIRECTED> |- stagehog  )   
+    .Return( stagehog )
     .Limit(Nullable<int>(20))
     .Results
     |> Seq.toList
