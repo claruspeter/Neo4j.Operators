@@ -7,43 +7,61 @@ without resorting to too many magic strings.
 
 ## Example
 
-[from Script.fsx](Script.fsx)
+We can now create expression node variables that can be used (and compile time checked) in both the _Match_ clause and the _Return_ clause.
+
+```` fsharp
+
+    open Neo4j.Operators
+
+    let stagehog = ExpressionNode<Person> "stagehog" 
+    let movie = ExpressionNode<Movie> "theMovie" 
+
+    db.Cypher
+        .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- stagehog  )   
+        .Return( stagehog, movie )
+        .Results
+
+````
+
+This reduces to the following equivalent query:
 
 ```` fsharp
 
     db.Cypher
-        .Match( "(stagehog:Person)-[:ACTED_IN]->(:Movie)<-[:DIRECTED]-(stagehog)" )  
-        .Return( "stagehog" )
+        .Match( "(stagehog:Person)-[:ACTED_IN]->(theMovie:Movie)<-[:DIRECTED]-(stagehog:Person)" )  
+        .Return( "stagehog, theMovie" )  // returned as a tuple
         .Results
 
 ````
--- The original query using a "SQL"-like string for the Cipher match clause, 
-and another string for the return variable that can't be compile-time checked.
 
-```` fsharp
+## Anonymous elements and Primitives
 
-    let stagehog = ExpressionNode<Person> "actorAndDirector" 
+Anonymous (i.e. un-named) elements can be used in the match query using a couple of provided primitives.
 
-    db.Cypher
-        .Match(  stagehog -| R<ACTED_IN>  |-> N<Movie> <-| R<DIRECTED> |- stagehog  )   
-        .Return( stagehog )
-        .Results
+* R&lt;ACTED_IN&gt; : an un-named relationship of type *ACTED_IN* => __[:ACTED_IN]__
+* N&lt;Movie&gt; : an un-named node of type _Movie_ => __(:Movie)__
 
-````
--- Current state of the operators that allow a _similar looking_ query,
-that is compile-time checkable, including the return variable.
+Named expression variables can be typed or un-typed, depending on your query needs.
 
-The sequence within the match clause compiles down to an equivalent string.
+* ExpressionNode&lt;Person&gt;( "p" ) : an node called "p" of any type => __(p)__
+* ExpressionRel&lt;DIRECTED&gt;( "r" ) : an relationship called "r" of type _DIRECTED_ => __[r:DIRECTED]__
+* ExpressionRel&lt;ANY&gt;( "r" ) : an relationship called "r" of any type => __[r:]__
 
-The _Return_ statement may also contain a number of expression nodes and relationships:
-```` fsharp
+Note that including a relationship variable in the _Return_ clause, will actually return the type of the relationship as a string (e.g. "DIRECTED").
 
-    ...
-    .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- stagehog  )   
-    .Return( stagehog, movie )
-    ...
+## Installation
 
-````
+### Nuget
+
+[Install-Package Neo4j.Operators](https://www.nuget.org/packages/Neo4j.Operators)
+
+### Build from source
+
+The build is executed using FAKE and the paket package manager.
+
+Windows: <code> build.cmd </code>
+
+Linux: <code> ./build.sh </code>
 
 # Licence
 

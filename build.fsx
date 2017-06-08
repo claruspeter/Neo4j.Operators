@@ -41,22 +41,18 @@ Target "CreatePackage" (fun _ ->
     {p with
       Title = "Neo4j Operators"
       Authors = ["Haumohio"]
-      Project = "Neo4jOperators"
-      Description = "sfdafdasdf"
+      Project = "Neo4j.Operators"
+      Description = "A collection of operators that can help write a Neo4j Cipher query using the natural syntax (or as close as possible) without resorting to too many magic strings."
       OutputPath = packagedDir
       WorkingDir = "."
-      Summary = "asdfasdf"
+      Summary = "A collection of operators that can help write a Neo4j Cipher query using the natural syntax (or as close as possible) without resorting to too many magic strings."
       Version = "0.4"
       Copyright = "UniLicence Haumohio 2017"
       //AccessKey = myAccesskey
       Publish = false
       Files = [(@"build/Neo4j.Operators.dll", Some @"lib/net45", None) ]
-      // DependenciesByFramework =
-      //   [{
-      //     FrameworkVersion  = "net45"
-      //     Dependencies =
-      //       ["FSharp.TypeProviders.StarterPack", GetPackageVersion "./packages/" "FSharp.TypeProviders.StarterPack"]
-      //   }]
+      Dependencies =
+            ["Neo4jClient", GetPackageVersion "./packages/" "Neo4jClient"]
       }
     )
     "Neo4j.Operators.nuspec"

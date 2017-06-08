@@ -13,7 +13,7 @@
   <description>@description@</description>
   <releaseNotes>@releaseNotes@</releaseNotes>
   <copyright>UnliLicence Haumohio 2016</copyright>
-  <tags>F# fsharp operators</tags>
+  <tags>F# fsharp operators neo4j</tags>
   @dependencies@
   @references@
   </metadata>
