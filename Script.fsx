@@ -24,18 +24,16 @@ let db =
 type Person = { name: string; born: int;}
 [<CLIMutable>]
 type Movie = { title: string; released: int; tagline: string; }
-
-
 type ACTED_IN() = class end
-
 type DIRECTED() = class end
 
-let stagehog = NodeVar<Person> "actorAndDirector" 
-let movie = NodeVar<Movie> "theMOvie" 
+let stagehog = ExpressionNode<Person> "actorAndDirector" 
+let movie = ExpressionNode<Movie> "theMOvie" 
+let r = ExpressionRel<ANY> "r"
 
 db.Cypher
-    .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- stagehog  )   
-    .Return( stagehog, movie )
+    .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| r |- stagehog  )   
+    .Return( r, stagehog, movie )
     .Limit(Nullable<int>(20))
     .Results
     |> Seq.toList

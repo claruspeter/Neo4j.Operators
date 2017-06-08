@@ -22,7 +22,7 @@ and another string for the return variable that can't be compile-time checked.
 
 ```` fsharp
 
-    let stagehog = ExpressionNode<Person>.Init "actorAndDirector" 
+    let stagehog = ExpressionNode<Person> "actorAndDirector" 
 
     db.Cypher
         .Match(  stagehog -| R<ACTED_IN>  |-> N<Movie> <-| R<DIRECTED> |- stagehog  )   
@@ -33,7 +33,17 @@ and another string for the return variable that can't be compile-time checked.
 -- Current state of the operators that allow a _similar looking_ query,
 that is compile-time checkable, including the return variable.
 
+The sequence within the match clause compiles down to an equivalent string.
 
+The _Return_ statement may also contain a number of expression nodes and relationships:
+```` fsharp
+
+    ...
+    .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- stagehog  )   
+    .Return( stagehog, movie )
+    ...
+
+````
 
 # Licence
 

@@ -10,39 +10,46 @@ open Neo4jClient
 
 let private rnd = Random()
 
-type ExpressionNode< 'a> 
-    = { v:string }
-    with static member inline Init<'a> varName : ExpressionNode<'a> = {v=varName }
+type ExpressionElement<'a>( varName: string) =
+    new() = ExpressionElement("")
+    member this.VarName = varName
 
-type ExpressionRel< 'a > 
-    = { v:string }
-    with static member inline Init<'a> varName : ExpressionRel<'a> = {v=varName }
+type ExpressionNode<'a> (varName) =
+    inherit ExpressionElement<'a>(varName)
+    new() = ExpressionNode<'a>("")
+
+type ExpressionRel<'a> (varName) =
+    inherit ExpressionElement<'a>(varName)
+    new() = ExpressionRel<'a>("")
 
 let N<'a> : ExpressionNode<'a> =
-    let t = typeof<'a>.Name.ToLower()
-    {v = "" }
+    ExpressionNode<'a>()
 
 let R<'a> : ExpressionRel<'a> =
-    let t = typeof<'a>.Name.ToLower()
-    {v = "" }
-
-let NodeVar<'a> varName : ExpressionNode<'a> =
-    ExpressionNode.Init<'a> varName
-
-let RelVar<'a> varName : ExpressionRel<'a> =
-    ExpressionRel.Init<'a> varName
+    ExpressionRel<'a>()
 
 
-type ExpressionNodeRel = { lhs: string; }
+type ExpressionPart = { lhs: string; }
+type ANY = string
 
 let ExprNodeName<'a> (x: ExpressionNode< 'a > ) =
-    sprintf "(%s:%s)" x.v ( x.GetType().GenericTypeArguments.[0].Name )
+    let typename = x.GetType().GenericTypeArguments.[0].Name
+    match typename with
+    | "ANY"
+    | "String" -> 
+        sprintf "(%s)" x.VarName
+    | _ -> sprintf "(%s:%s)" x.VarName typename
 
 let ExprRelName<'a> (x: ExpressionRel< 'a > ) =
-    sprintf "%s:%s" x.v ( x.GetType().GenericTypeArguments.[0].Name )
+    let typename = x.GetType().GenericTypeArguments.[0].Name
+    match typename with
+    | "ANY"
+    | "String" -> 
+        sprintf "%s" x.VarName
+    | _ -> sprintf "%s:%s" x.VarName typename
 
 let inline (@.@) (ev:ExpressionNode<'b>) (prop:string) =
-    sprintf "%s.%s" (ev.v) prop
+    sprintf "%s.%s" (ev.VarName) prop
 
 let (@=) prop (propVal:'a) =
     prop + "=" + propVal.ToString()
@@ -53,30 +60,51 @@ let inline ( --> ) (a:ExpressionNode<'a>) (b:ExpressionNode<'b>) =
 let inline ( -| ) (a:ExpressionNode<'a>) (b:ExpressionRel<'b>) =
     { lhs = sprintf "%s-[%s" (ExprNodeName a) (ExprRelName b) }
 
-let inline ( |-> ) (a:ExpressionNodeRel) (b:ExpressionNode<'a>) =
+let inline ( |-> ) (a:ExpressionPart) (b:ExpressionNode<'a>) =
     { lhs = sprintf "%s]->%s" a.lhs (ExprNodeName b) }
 
-let inline ( <-| ) (a:ExpressionNodeRel) (b:ExpressionRel<'a>) =
+let inline ( <-| ) (a:ExpressionPart) (b:ExpressionRel<'a>) =
     { lhs = sprintf "%s<-[%s" a.lhs (ExprRelName b) }
 
-let inline ( |- ) (a:ExpressionNodeRel) (b:ExpressionNode<'b>) =
+let inline ( |- ) (a:ExpressionPart) (b:ExpressionNode<'b>) =
     { lhs = sprintf "%s]-%s" a.lhs (ExprNodeName b) }
 
 let private toLinq (expr : Expr<'b>) =
     let linq = LeafExpressionConverter.QuotationToExpression expr
     Expression.Lambda<Func<'b>>(linq, [||]) 
 
+let retFunc (a: ExpressionElement<'a>) =
+    match a with
+    | :? ExpressionRel<'a> -> sprintf "type(%s)" a.VarName
+    | _ ->a.VarName
+
 type Cypher.ICypherFluentQuery with
     member this.Match x =
         this.Match( ExprNodeName x )
     member this.Match x =
         this.Match( x.lhs )
-    member this.Return<'a> (x: ExpressionNode<'a>  ) =
-        this.Return<'a>(x.v)
-    member this.Return((x: ExpressionNode<'a>), (y: ExpressionNode<'b>)) =
-        let expr = <@ ( Cypher.Return.As<'a>(x.v), Cypher.Return.As<'b>(y.v) ) @>
+    member this.Return<'a> (x: ExpressionElement<'a>  ) =
+        this.Return<'a>(x.VarName)
+    member this.Return((a: ExpressionElement<'a>), (b: ExpressionElement<'b>)) =
+        let aName = retFunc a
+        let bName = retFunc b
+        let expr = 
+            <@ ( 
+                    Cypher.Return.As<'a>(aName)
+                    , Cypher.Return.As<'b>(bName)
+            ) @>
         let linqExpr = toLinq( expr )
         this.Return( linqExpr )
-    member this.Return<'a> (x: ExpressionRel<'a>  ) =
-        this.Return<'a>(x.v)
+    member this.Return((a: ExpressionElement<'a>), (b: ExpressionElement<'b>), (c: ExpressionElement<'c>)) =
+        let aName = retFunc a
+        let bName = retFunc b
+        let cName = retFunc c
+        let expr = 
+            <@ ( 
+                    Cypher.Return.As<'a>(aName)
+                    , Cypher.Return.As<'b>(bName)
+                    , Cypher.Return.As<'c>(cName) 
+            ) @>
+        let linqExpr = toLinq( expr )
+        this.Return( linqExpr )
 
