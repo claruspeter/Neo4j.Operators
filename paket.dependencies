@@ -2,5 +2,8 @@ source https://www.nuget.org/api/v2
 framework: net45
 
 nuget FAKE
+nuget FSharp.Core
+nuget FsUnit
+nuget NUnit
+nuget NUnit.ConsoleRunner
 nuget neo4jClient
-

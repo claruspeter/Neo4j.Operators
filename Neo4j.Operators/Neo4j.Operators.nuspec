@@ -12,7 +12,7 @@
   <projectUrl>https://github.com/claruspeter/Neo4jOperators</projectUrl>
   <description>@description@</description>
   <releaseNotes>@releaseNotes@</releaseNotes>
-  <copyright>UnliLicence Haumohio 2016</copyright>
+  <copyright>UnliLicence Haumohio 2017</copyright>
   <tags>F# fsharp operators neo4j</tags>
   @dependencies@
   @references@
