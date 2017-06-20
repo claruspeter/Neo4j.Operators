@@ -6,4 +6,5 @@ nuget FSharp.Core
 nuget FsUnit
 nuget NUnit
 nuget NUnit.ConsoleRunner
+nuget Foq
 nuget neo4jClient

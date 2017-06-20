@@ -1,4 +1,5 @@
 FSharp.Core
 FsUnit
 NUnit
+Foq
 Neo4jClient

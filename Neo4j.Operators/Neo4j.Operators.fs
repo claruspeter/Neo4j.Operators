@@ -93,21 +93,22 @@ let private toLinq (expr : Expr<'b>) =
     let linq = LeafExpressionConverter.QuotationToExpression expr
     Expression.Lambda<Func<'b>>(linq, [||]) 
 
-let retFunc (a: ExpressionElement<'a>) =
-    match a with
-    | :? ExpressionRel<'a> -> sprintf "type(%s)" a.VarName
-    | _ ->a.VarName
+let returnFormat (a: ExpressionElement<'a>) =
+    match a.VarName, a with
+    | "", _ -> failwith "Expression must be named"
+    | _, :? ExpressionRel<'a> -> sprintf "type(%s)" a.VarName
+    | _ -> a.VarName
 
 type Cypher.ICypherFluentQuery with
-    member this.Match x =
-        this.Match( ExprNodeName x )
+    member this.Match (x: ExpressionNode<'a>) =
+        this.Match( x.ToString() )
     member this.Match (x: IExpressionPart) =
         this.Match( x.lhs )
     member this.Return<'a> (x: ExpressionElement<'a>  ) =
-        this.Return<'a>(x.VarName)
+        this.Return<'a>( returnFormat x )
     member this.Return((a: ExpressionElement<'a>), (b: ExpressionElement<'b>)) =
-        let aName = retFunc a
-        let bName = retFunc b
+        let aName = returnFormat a
+        let bName = returnFormat b
         let expr = 
             <@ ( 
                     Cypher.Return.As<'a>(aName)
@@ -116,9 +117,9 @@ type Cypher.ICypherFluentQuery with
         let linqExpr = toLinq( expr )
         this.Return( linqExpr )
     member this.Return((a: ExpressionElement<'a>), (b: ExpressionElement<'b>), (c: ExpressionElement<'c>)) =
-        let aName = retFunc a
-        let bName = retFunc b
-        let cName = retFunc c
+        let aName = returnFormat a
+        let bName = returnFormat b
+        let cName = returnFormat c
         let expr = 
             <@ ( 
                     Cypher.Return.As<'a>(aName)

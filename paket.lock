@@ -2,6 +2,7 @@ RESTRICTION: == net45
 NUGET
   remote: https://www.nuget.org/api/v2
     FAKE (4.61.2)
+    Foq (1.7.2)
     FSharp.Core (4.2.1)
     FsUnit (3.0)
       FSharp.Core (>= 3.1.2.5)

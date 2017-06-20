@@ -55,7 +55,7 @@ Target "CreatePackage" (fun _ ->
       OutputPath = packagedDir
       WorkingDir = "."
       Summary = "A collection of operators that can help write a Neo4j Cipher query using the natural syntax (or as close as possible) without resorting to too many magic strings."
-      Version = "0.4"
+      Version = "0.5"
       Copyright = "UniLicence Haumohio 2017"
       //AccessKey = myAccesskey
       Publish = false
