@@ -49,7 +49,7 @@ This reduces to the following equivalent query:
 
 ````
 
-Full worked example in [Sample.fsx](Sample.fsx).
+Full worked example in [Sample.fsx](Neo4j.Operators/Sample.fsx).
 
 ## Anonymous elements and Primitives
 
