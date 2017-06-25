@@ -20,10 +20,11 @@ let db =
     db.Connect()
     db
 
+//NOTE that you could use Neo4jTypeProvider (nuget) to create the following types directly from the data source itself.
 [<CLIMutable>]
 type Person = { name: string; born: int;}
 [<CLIMutable>]
-type Movie = { title: string; released: int; tagline: string; }
+type Movie = { title: string; released: int; tagline: string; }  
 type ACTED_IN() = class end
 type DIRECTED() = class end
 

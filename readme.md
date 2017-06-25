@@ -40,7 +40,7 @@ This reduces to the following equivalent query:
 
     [
      ({name = "Tom Hanks"; born = 1956;},
-      {title = "That Thing You Do"; released = 1996; tagline = "In every life there comes a time when that thing you dream be"+[23 chars];});
+      {title = "That Thing You Do"; released = 1996; tagline = "In every life there comes a time...";});
      ({name = "Clint Eastwood"; born = 1930;},
       {title = "Unforgiven"; released = 1992; tagline = "It's a hell of a thing, killing a man";});
      ({name = "Danny DeVito"; born = 1944;},
@@ -48,6 +48,8 @@ This reduces to the following equivalent query:
     ]
 
 ````
+
+Full worked example in [Sample.fsx](Sample.fsx).
 
 ## Anonymous elements and Primitives
 
