@@ -1,7 +1,7 @@
 // Learn more about F# at http://fsharp.net. See the 'F# Tutorial' project
 // for more guidance on F# programming.
 
-#I @"build"
+#I @"../build"
 #r "Neo4j.Operators"
 #r "Neo4jClient"
 
@@ -28,7 +28,7 @@ type ACTED_IN() = class end
 type DIRECTED() = class end
 
 let stagehog = ExpressionNode<Person> "actorAndDirector" 
-let movie = ExpressionNode<Movie> "theMOvie" 
+let movie = ExpressionNode<Movie> "theMovie" 
 let r = ExpressionRel<ANY> "r"
 
 db.Cypher

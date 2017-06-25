@@ -19,7 +19,7 @@ We can now create expression node variables that can be used (and compile time c
     db.Cypher
         .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| R<DIRECTED> |- stagehog  )   
         .Return( stagehog, movie )
-        .Results
+        .Results()
 
 ````
 
@@ -30,7 +30,22 @@ This reduces to the following equivalent query:
     db.Cypher
         .Match( "(stagehog:Person)-[:ACTED_IN]->(theMovie:Movie)<-[:DIRECTED]-(stagehog:Person)" )  
         .Return( "stagehog, theMovie" )  // returned as a tuple
-        .Results
+        .Results()
+
+````
+
+... and returns:
+
+```` fsharp
+
+    [
+     ({name = "Tom Hanks"; born = 1956;},
+      {title = "That Thing You Do"; released = 1996; tagline = "In every life there comes a time when that thing you dream be"+[23 chars];});
+     ({name = "Clint Eastwood"; born = 1930;},
+      {title = "Unforgiven"; released = 1992; tagline = "It's a hell of a thing, killing a man";});
+     ({name = "Danny DeVito"; born = 1944;},
+      {title = "Hoffa"; released = 1992; tagline = "He didn't want law. He wanted justice.";})
+    ]
 
 ````
 
@@ -43,7 +58,7 @@ Anonymous (i.e. un-named) elements can be used in the match query using a couple
 
 Named expression variables can be typed or un-typed, depending on your query needs.
 
-* ExpressionNode&lt;Person&gt;( "p" ) : an node called "p" of any type => __(p)__
+* ExpressionNode&lt;Person&gt;( "p" ) : an node called "p" of type _Person_ => __(p:Person)__
 * ExpressionRel&lt;DIRECTED&gt;( "r" ) : an relationship called "r" of type _DIRECTED_ => __[r:DIRECTED]__
 * ExpressionRel&lt;ANY&gt;( "r" ) : an relationship called "r" of any type => __[r:]__
 
