@@ -32,9 +32,19 @@ let stagehog = ExpressionNode<Person> "actorAndDirector"
 let movie = ExpressionNode<Movie> "theMovie" 
 let r = ExpressionRel<ANY> "r"
 
-db.Cypher
-    .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| r |- stagehog  )   
-    .Return( r, stagehog, movie )
-    .Limit(Nullable<int>(20))
-    .Results
-    |> Seq.toList
+let allTheStageHogs =
+    db.Cypher
+        .Match(  stagehog -| R<ACTED_IN>  |-> movie <-| r |- stagehog  )   
+        .Return( r, stagehog, movie )
+        .Limit(Nullable<int>(20))
+        .Results
+        |> Seq.toList
+
+let moviesFromMyFavouriteYear =
+    db.Cypher
+        .Match( movie )
+        .Where( movie @.@ "released" @= 1992 )
+        .Return( movie )
+        .Limit(Nullable<int>(20))
+        .Results
+        |> Seq.toList
